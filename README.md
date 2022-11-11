@@ -1,5 +1,5 @@
 # Cook-It-Off
-An interactive narrative game which involves automatic dialogue generation.
+An interactive narrative game which involves **automatic commentary generation**.
 This project is a work in progress for our [CSC 582 Computer Models of Interactive Narrative](https://www.engineeringonline.ncsu.edu/course/csc-582-computer-models-of-interactive-narrative/) class.
 
 # Premise

@@ -2,7 +2,9 @@ from flask import Flask, render_template, request
 import dialogues
 
 # from werkzeug.middleware.profiler import ProfilerMiddleware
-DIALOGUE = dialogues.Dialogue("ad-lib.json", "paraphrases.json")
+DIALOGUE = dialogues.Dialogue(
+    "./pre_generated/ad-lib.json", "./pre_generated/paraphrases.json"
+)
 
 app = Flask(
     __name__, template_folder="./flask/templates/", static_folder="./flask/static/"

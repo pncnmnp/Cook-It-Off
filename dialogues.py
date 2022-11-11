@@ -174,8 +174,3 @@ class Dialogue:
             if some_GPT:
                 return self.affirmations() + "\n" + some_GPT
             return self.affirmations()
-
-
-if __name__ == "__main__":
-    d = Dialogue("ad-lib.json", "paraphrases.json")
-    print(d.progress("You add the salt"))

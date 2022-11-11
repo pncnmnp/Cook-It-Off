@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<head>
+  <title>Gordo's cooking challenge!</title>
+  <style>
+    body {
+      max-width: 38rem;
+      padding: 2rem;
+      margin: auto;
+      text-align: center;
+    }
+    h1 {
+      text-align: center;
+      font-family: cursive;
+    }
+    h2 {
+      font-style: italic;
+      text-align: center;
+    }
+    blockquote {
+      text-align: center;
+      font-style: italic;
+    }
+  </style>
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+  var ingredients = ["egg", "brocoli", "salt", "pepper", "mushrooms"];
+  var utensils = ["bowl", "pan", "oven", "stove"];
+  var elements = {};
+  function render_element(obj) {
+    // console.log(obj.tagName);
+    if (obj.tagName == "SELECT") {
+      return obj.value;
+    }
+    return obj.textContent;
+  }
+
+  function load_element(id) {
+    elements[id] = document.getElementById(id);
+  }
+  function load_body() {
+    load_element("intro");
+    load_element("challenge");
+    load_element("cooking");
+    load_element("lastaction");
+    load_element("commentary");
+    load_element("action");
+    load_element("ingredient");
+    load_element("utensil");
+    load_element("do_action");
+
+    // initialize cooking
+    cooking_controller(elements["cooking"]);
+  }
+  function thing() {
+    console.log(render_cooking());
+    let request_to_send = "You " + render_cooking();
+    elements["lastaction"].innerHTML = "<br>You " + render_cooking();
+
+    $.ajax({
+      type: "POST",
+      url: "/speech",
+      async: false,
+      contentType: "application/json",
+      data: JSON.stringify({ resp: request_to_send }),
+      dataType: "json",
+      success: function (response) {
+        elements["commentary"].innerHTML = response.speech;
+      },
+      error: function (err) {
+        console.log(err);
+      },
+    });
+  }
+  function clear_cooking() {
+    elements["cooking"].innerHTML = "";
+    /*
+  let obj = elements["cooking"];
+  // clear cooking
+  let children = obj.childNodes;
+  for (let i = 0; i < children.length; i++) {
+    obj.removeChild(obj[i]);
+  }
+  */
+  }
+  function render_cooking() {
+    let obj = elements["cooking"];
+    let rendered_text = "";
+    let children = obj.children;
+    for (let i = 0; i < children.length; i++) {
+      rendered_text += render_element(children[i]);
+    }
+    return rendered_text;
+  }
+  function set_cooking(list) {
+    clear_cooking();
+    let obj = elements["cooking"];
+    for (let i in list) {
+      obj.appendChild(list[i]);
+    }
+  }
+  function textnode(str) {
+    let ret = document.createElement("text");
+    ret.innerHTML = str;
+    return ret;
+  }
+  function cooking_controller(obj) {
+    switch (elements["action"].value) {
+      case "mix":
+        set_cooking([
+          elements["action"],
+          textnode(" the "),
+          elements["ingredient"],
+        ]);
+        break;
+      case "cook":
+        set_cooking([
+          elements["action"],
+          textnode(" the "),
+          elements["ingredient"],
+          textnode(" in the "),
+          elements["utensil"],
+        ]);
+        break;
+      case "preheat":
+        set_cooking([
+          elements["action"],
+          textnode(" the "),
+          elements["utensil"],
+        ]);
+        break;
+      case "remove":
+        set_cooking([
+          elements["action"],
+          textnode(" the "),
+          elements["ingredient"],
+          textnode(" from the "),
+          elements["utensil"],
+        ]);
+        break;
+      case "serve":
+        set_cooking([elements["action"], textnode(" the final dish!")]);
+        break;
+    }
+  }
+</script>
+<body onload="load_body()">
+  <h1>Cook It Off!</h1>
+  <blockquote>
+    Not everyone can become a great artist, but a great artist can come from
+    anywhere.
+    <br />
+    - Food critic Anton Ego
+  </blockquote>
+  <audio autoplay controls>
+    <source
+      src="{{ url_for('static', filename='donau.mp3') }}"
+      type="audio/mpeg"
+    />
+  </audio>
+
+  <div id="intro">
+    You are here on this cooking challenge! Gordo will be judging your
+    cooking...
+  </div>
+  <div id="challenge">Cook an omelette!</div>
+  <form id="cooking" onchange="cooking_controller(this)">
+    <select id="ingredient" min-width="100">
+      <option value="egg">egg</option>
+      <option value="brocoli">brocoli</option>
+      <option value="salt">salt</option>
+      <option value="pepper">pepper</option>
+      <option value="mushrooms">mushroom</option>
+    </select>
+    <select id="utensil" min-width="100">
+      <option value="bowl">bowl</option>
+      <option value="pan">pan</option>
+      <option value="oven">oven</option>
+      <option value="stove">stove</option>
+    </select>
+    <select id="action" min-width="100">
+      <option value="mix">mix</option>
+      <option value="preheat">preheat</option>
+      <option value="cook">cook</option>
+      <option value="remove">remove</option>
+      <option value="serve">serve</option>
+    </select>
+  </form>
+  <input id="do_action" type="button" value="Do action" onclick="thing()" />
+  <div id="lastaction">
+    You are about to start cooking! Choose and confirm your action above.
+  </div>
+  <div id="commentary">Gordo is watching you...</div>
+</body>

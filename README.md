@@ -9,7 +9,7 @@ This project is a work in progress for our [CSC 582 Computer Models of Interacti
   <i>Omelette in a pan, using <a href="https://labs.openai.com/">Dall-E</a></i>
 </p>
 
-_Join us in an adventure, as I teach you how to cook an omelette with the lovely music of Johann Strauss II playing in the air._
+_Join me in an adventure, as I teach you how to cook an omelette with the lovely music of Johann Strauss II playing in the air._
 
 _- Gordo Ramo, Michelin star chef_
 

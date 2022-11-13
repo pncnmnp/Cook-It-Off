@@ -24,3 +24,9 @@ def speech():
     text = DIALOGUE.progress(query)
     resp = {"speech": text}
     return resp, 200
+
+
+@app.route("/reset", methods=["POST"])
+def reset():
+    DIALOGUE.pointer = 0
+    return str(), 200

@@ -52,6 +52,21 @@
     // initialize cooking
     cooking_controller(elements["cooking"]);
   }
+  function reset() {
+    $.ajax({
+      type: "POST",
+      url: "/reset",
+      async: false,
+      success: function (response) {
+        elements["lastaction"].innerHTML =
+          "You are about to start cooking! Choose and confirm your action above.";
+        elements["commentary"].innerHTML = "Gordo is watching you...";
+      },
+      error: function (err) {
+        console.log(err);
+      },
+    });
+  }
   function thing() {
     console.log(render_cooking());
     let request_to_send = "You " + render_cooking();
@@ -187,6 +202,7 @@
     </select>
   </form>
   <input id="do_action" type="button" value="Do action" onclick="thing()" />
+  <input id="reset" type="button" value="Reset" onclick="reset()" />
   <div id="lastaction">
     You are about to start cooking! Choose and confirm your action above.
   </div>

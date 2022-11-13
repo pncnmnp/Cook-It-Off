@@ -14,14 +14,9 @@ _Join me in an adventure, as I teach you how to cook an omelette with the lovely
 _- Gordo Ramo, Michelin star chef_
 
 # Install
-This game requires `nltk` and `pattern`. To install nltk,
+This game requires `flask`. To install flask,
 ```bash
-python3 -m pip install nltk
-```
-
-There are [some issues with installing pattern on python 3.7 and above](https://github.com/clips/pattern/pull/250). We recommend using a 2019 fork,
-```bash
-python3 -m pip install git+https://github.com/uob-vil/pattern.git
+python3 -m pip install flask
 ```
 
 To run the game, use
@@ -30,6 +25,10 @@ flask --app server --debug run
 ```
 
 The game should be running on your localhost.
+
+# License
+This project uses code from Pattern's codebase to implement the logic of changing tenses (see [`inflect.py`](https://github.com/pncnmnp/Cook-It-Off/blob/master/inflect.py)). Pattern's code is [licensed under BSD 3-Clause](https://github.com/clips/pattern/blob/master/LICENSE.txt).
+
 
 # Contributors
 * Bonnie Chhatrala (bschhatr@ncsu.edu)

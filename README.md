@@ -14,6 +14,14 @@ _Join me in an adventure, as I teach you how to cook an omelette with the lovely
 _- Gordo Ramo, Michelin star chef_
 
 # Install
+
+## Docker
+To run using Docker,
+```bash
+./run.sh
+```
+
+## Locally
 This game requires `flask`. To install flask,
 ```bash
 python3 -m pip install flask

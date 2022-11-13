@@ -1,10 +1,7 @@
 import json
 import random
 
-# To download this dependency, use:
-# python3 -m pip install git+https://github.com/uob-vil/pattern.git
-from pattern.en import conjugate, lexeme, PRESENT, PARTICIPLE, SG
-import nltk
+from inflect import conjugate, PRESENT, PARTICIPLE, SG
 
 # Here is a sample code we use to generate the paraphrases:
 
@@ -64,7 +61,6 @@ class Dialogue:
         self.paraphrases = json.load(open(paraphrase_file))
         self.pointer = 0
         self.recipe = recipe if recipe else Recipe
-        self.get_dependencies()
         self.one_time_dialogue = {
             "secret_sauce": False,
             "favorite_food": False,
@@ -72,16 +68,13 @@ class Dialogue:
             "veggies": False,
         }
 
-    def get_dependencies(self):
-        nltk.download("omw-1.4")
-
     def pattern_garbage(self):
         """
         For more context:
         https://github.com/clips/pattern/issues/295#issuecomment-841625057
         """
         try:
-            l = lexeme("heat")
+            l = conjugate("heat", PRESENT + PARTICIPLE, number=SG)
         except:
             pass
 

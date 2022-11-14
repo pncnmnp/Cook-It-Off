@@ -201,6 +201,10 @@
         break;
     }
   }
+
+  document.onmousemove = function () {
+    document.getElementById("audio").play();
+  };
 </script>
 
 <body onload="load_body()">
@@ -211,7 +215,7 @@
     <br />
     - Food critic Anton Ego
   </blockquote>
-  <audio autoplay controls>
+  <audio id="audio" autoplay controls>
     <source src="{{ url_for('static', filename='donau.mp3') }}" type="audio/mpeg" />
   </audio>
 

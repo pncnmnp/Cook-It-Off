@@ -91,9 +91,26 @@
     load_element("ingredient");
     load_element("utensil");
     load_element("do_action");
-
+    load_element("history");
+    
+    load_element("audio");
+    // initialize audio playback?
+    try_play(elements["audio"]);
+    
     // initialize cooking
     cooking_controller(elements["cooking"]);
+  }
+  function try_play(elem) {
+    let playAttempt = setInterval(() => {
+      elem
+        .play()
+        .then(() => {
+          clearInterval(playAttempt);
+        })
+        .catch((error) => {
+          //didn't play
+        });
+    }, 500);
   }
   function reset() {
     $.ajax({
@@ -103,6 +120,7 @@
       success: function (response) {
         elements["lastaction"].innerHTML =
           "You are about to start cooking! Choose and confirm your action above.";
+        elements["history"].innerHTML = "";
         elements["commentary"].innerHTML = "Gordo is watching you...";
       },
       error: function (err) {
@@ -113,7 +131,8 @@
   function thing() {
     console.log(render_cooking());
     let request_to_send = "You " + render_cooking();
-    elements["lastaction"].innerHTML = "<br>You " + render_cooking();
+    elements["lastaction"].innerHTML = request_to_send;
+    elements["history"].innerHTML += "<br>" + request_to_send;
 
     $.ajax({
       type: "POST",
@@ -149,6 +168,14 @@
       rendered_text += render_element(children[i]);
     }
     return rendered_text;
+  }
+  function toggle_history(elem) {
+    elements["history"].hidden = !elements["history"].hidden;
+    if (elements["history"].hidden) {
+      elem.innerHTML = "Show History";
+    } else {
+      elem.innerHTML = "Hide History";
+    }
   }
   function set_cooking(list) {
     clear_cooking();
@@ -201,10 +228,6 @@
         break;
     }
   }
-
-  document.onmousemove = function () {
-    document.getElementById("audio").play();
-  };
 </script>
 
 <body onload="load_body()">
@@ -215,9 +238,7 @@
     <br />
     - Food critic Anton Ego
   </blockquote>
-  <audio id="audio" autoplay controls>
-    <source src="{{ url_for('static', filename='donau.mp3') }}" type="audio/mpeg" />
-  </audio>
+  <audio id="audio" src="{{ url_for('static', filename='donau.mp3') }}" loop></audio>
 
   <div id="intro">
     You are here on this cooking challenge! Gordo will be judging your
@@ -252,4 +273,8 @@
     You are about to start cooking! Choose and confirm your action above.
   </div>
   <div id="commentary">Gordo is watching you...</div>
+  <div id="historycontainer" style="background-color:#aaaaaa">
+    <button onclick="toggle_history(this)">Show History</button>
+    <div id="history" hidden></div>
+  </div>
 </body>

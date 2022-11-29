@@ -44,11 +44,12 @@ from inflect import conjugate, PRESENT, PARTICIPLE, SG
 Recipe = [
     "You preheat the pan",
     "You mix the egg",
-    "You cook the egg in the pan",
     "You mix the brocoli",
+    "You mix the mushrooms",
+    "You cook the egg in the pan",
+    "You remove the egg from the pan",
     "You mix the salt",
     "You mix the pepper",
-    "You mix the mushrooms",
     "You serve the final dish!",
 ]
 

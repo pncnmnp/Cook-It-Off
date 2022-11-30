@@ -69,6 +69,7 @@ class Dialogue:
             "old-man": False,
             "veggies": False,
         }
+        self.non_optional_done = []
 
     def pattern_garbage(self):
         """
@@ -129,10 +130,10 @@ class Dialogue:
 
     def parse_input(self, sent):
         keywords = ["You", "the", "in", "from"]
-        marker = "<>"
-        for keyword in keywords:
-            sent = sent.replace(keyword, marker)
-        tokens = [token.strip() for token in sent.split(marker) if token.strip()]
+        tokens = list()
+        for word in sent.strip().split():
+            if word not in keywords:
+                tokens.append(word)
         return tokens
 
     def sprinkle_GPT(self, tokens):
@@ -163,6 +164,7 @@ class Dialogue:
 
         # Optional choice action
         if user_choice in current_choices and choices > 1:
+            self.non_optional_done.append(user_choice)
             return True, user_choice
         elif user_choice in self.recipe[self.pointer + 1]:
             correct_choice = self.recipe[self.pointer + 1][0]
@@ -180,11 +182,12 @@ class Dialogue:
         # So, we pick just one for now - to display
         decision, correct_choice = self.pointer_loc(user_choice)
         tokens = self.parse_input(correct_choice)
+        print(tokens)
         if not decision:
             nudge = self.nudge()
             self.pattern_garbage()
             verb = conjugate(verb=tokens[0], tense=PRESENT + PARTICIPLE, number=SG)
-            correct = " You should be " + verb + " the " + tokens[1]
+            correct = " You should be " + verb + " the " + " ".join(tokens[1:])
             return nudge + correct
         else:
             some_GPT = self.sprinkle_GPT(tokens)

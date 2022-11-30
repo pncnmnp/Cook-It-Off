@@ -173,16 +173,30 @@ class Dialogue:
         else:
             return False, self.recipe[self.pointer + 1][0]
 
+    def report_card(self):
+        speech = "Great job! You've completed the recipe! Time to taste it.....\n"
+        salt = [action for action in self.non_optional_done if "salt" in action]
+        pepper = [action for action in self.non_optional_done if "pepper" in action]
+        vegs = [
+            [action for action in self.non_optional_done if veg in action]
+            for veg in Veggie_List
+        ]
+        if not any(salt):
+            speech += " No salt!!! Seriously?\n"
+        if not any(pepper):
+            speech += "Not a big fan of pepper, eh?\n"
+        if not any(vegs):
+            speech += " Having some veggies might make it look less blend!\n"
+        return speech
+
     def progress(self, user_choice):
         if self.pointer >= len(Recipe):
             return str()
 
         # For non-optional case there can only be one correct choice
         # For optional cases, there can be muliple correct choices
-        # So, we pick just one for now - to display
         decision, correct_choice = self.pointer_loc(user_choice)
         tokens = self.parse_input(correct_choice)
-        print(tokens)
         if not decision:
             nudge = self.nudge()
             self.pattern_garbage()
@@ -190,6 +204,9 @@ class Dialogue:
             correct = " You should be " + verb + " the " + " ".join(tokens[1:])
             return nudge + correct
         else:
+            if self.pointer >= len(Recipe):
+                report_card = self.report_card()
+                return report_card
             some_GPT = self.sprinkle_GPT(tokens)
             if some_GPT:
                 return self.affirmations() + "\n" + some_GPT

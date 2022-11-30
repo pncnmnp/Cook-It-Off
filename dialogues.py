@@ -165,8 +165,9 @@ class Dialogue:
         if user_choice in current_choices and choices > 1:
             return True, user_choice
         elif user_choice in self.recipe[self.pointer + 1]:
+            correct_choice = self.recipe[self.pointer + 1][0]
             self.pointer += 2
-            return True, self.recipe[self.pointer + 1][0]
+            return True, correct_choice
         else:
             return False, self.recipe[self.pointer + 1][0]
 

@@ -41,16 +41,17 @@ from inflect import conjugate, PRESENT, PARTICIPLE, SG
 #   sents.append(tokenizer.batch_decode(outputs, skip_special_tokens=True))
 # print(sents)
 
+# How do we want to parse the recipe?
+# If list > 1 - optional stuff
+# If list == 1 - non optional stuff
 Recipe = [
-    "You preheat the pan",
-    "You mix the egg",
-    "You mix the brocoli",
-    "You mix the mushrooms",
-    "You cook the egg in the pan",
-    "You remove the egg from the pan",
-    "You mix the salt",
-    "You mix the pepper",
-    "You serve the final dish!",
+    ["You preheat the pan"],
+    ["You mix the egg"],
+    ["You mix the brocoli", "You mix the mushrooms"],
+    ["You cook the egg in the pan"],
+    ["You remove the egg from the pan"],
+    ["You mix the salt", "You mix the pepper"],
+    ["You serve the final dish!"],  # This step needs to be there in every single recipe
 ]
 
 Veggie_List = ["brocoli", "mushrooms"]
@@ -150,13 +151,35 @@ class Dialogue:
         else:
             return None
 
+    def pointer_loc(self, user_choice):
+        current_choices = self.recipe[self.pointer]
+        choices = len(current_choices)
+        # Non-optional choice action
+        if user_choice in current_choices and choices == 1:
+            self.pointer += 1
+            return True, user_choice
+        elif choices == 1:
+            return False, current_choices[0]
+
+        # Optional choice action
+        if user_choice in current_choices and choices > 1:
+            return True, user_choice
+        elif user_choice in self.recipe[self.pointer + 1]:
+            self.pointer += 2
+            return True, self.recipe[self.pointer + 1][0]
+        else:
+            return False, self.recipe[self.pointer + 1][0]
+
     def progress(self, user_choice):
         if self.pointer >= len(Recipe):
             return str()
 
-        correct_choice = self.recipe[self.pointer]
+        # For non-optional case there can only be one correct choice
+        # For optional cases, there can be muliple correct choices
+        # So, we pick just one for now - to display
+        decision, correct_choice = self.pointer_loc(user_choice)
         tokens = self.parse_input(correct_choice)
-        if user_choice != correct_choice:
+        if not decision:
             nudge = self.nudge()
             self.pattern_garbage()
             verb = conjugate(verb=tokens[0], tense=PRESENT + PARTICIPLE, number=SG)
@@ -164,7 +187,6 @@ class Dialogue:
             return nudge + correct
         else:
             some_GPT = self.sprinkle_GPT(tokens)
-            self.pointer += 1
             if some_GPT:
                 return self.affirmations() + "\n" + some_GPT
             return self.affirmations()

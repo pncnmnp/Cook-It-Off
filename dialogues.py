@@ -1,4 +1,3 @@
-import json
 import random
 
 from inflect import conjugate, PRESENT, PARTICIPLE, SG
@@ -58,9 +57,9 @@ Veggie_List = ["brocoli", "mushrooms"]
 
 
 class Dialogue:
-    def __init__(self, script_file, paraphrase_file, recipe=None):
-        self.script = json.load(open(script_file))
-        self.paraphrases = json.load(open(paraphrase_file))
+    def __init__(self, script, paraphrases, recipe=None):
+        self.script = script
+        self.paraphrases = paraphrases
         self.pointer = 0
         self.recipe = recipe if recipe else Recipe
         self.one_time_dialogue = {
@@ -70,6 +69,20 @@ class Dialogue:
             "veggies": False,
         }
         self.non_optional_done = []
+        self.state_fields = ["pointer", "one_time_dialogue", "non_optional_done"]
+
+    def set_state(self, state):
+        for f in self.state_fields:
+            if f in state:
+                setattr(self, f, state[f])
+
+    def get_state(self):
+        state = {}
+
+        for f in self.state_fields:
+            state[f] = getattr(self, f)
+
+        return state
 
     def pattern_garbage(self):
         """

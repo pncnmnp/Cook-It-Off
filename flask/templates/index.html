@@ -67,6 +67,7 @@
 </head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <script>
+  var state = {};
   var ingredients = ["egg", "brocoli", "salt", "pepper", "mushrooms"];
   var utensils = ["bowl", "pan", "oven", "stove"];
   var elements = {};
@@ -92,11 +93,11 @@
     load_element("utensil");
     load_element("do_action");
     load_element("history");
-    
+
     load_element("audio");
     // initialize audio playback?
     try_play(elements["audio"]);
-    
+
     // initialize cooking
     cooking_controller(elements["cooking"]);
   }
@@ -113,20 +114,11 @@
     }, 500);
   }
   function reset() {
-    $.ajax({
-      type: "POST",
-      url: "/reset",
-      async: false,
-      success: function (response) {
-        elements["lastaction"].innerHTML =
-          "You are about to start cooking! Choose and confirm your action above.";
-        elements["history"].innerHTML = "";
-        elements["commentary"].innerHTML = "Gordo is watching you...";
-      },
-      error: function (err) {
-        console.log(err);
-      },
-    });
+    state = {};
+    elements["lastaction"].innerHTML =
+      "You are about to start cooking! Choose and confirm your action above.";
+    elements["history"].innerHTML = "";
+    elements["commentary"].innerHTML = "Gordo is watching you...";
   }
   function thing() {
     console.log(render_cooking());
@@ -139,10 +131,11 @@
       url: "/speech",
       async: false,
       contentType: "application/json",
-      data: JSON.stringify({ resp: request_to_send }),
+      data: JSON.stringify({ resp: request_to_send, state: state }),
       dataType: "json",
-      success: function (response) {
-        elements["commentary"].innerHTML = response.speech;
+      success: function (resp) {
+        elements["commentary"].innerHTML = resp.speech;
+        state = resp.state;
       },
       error: function (err) {
         console.log(err);
